@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id       Int               @id @default(autoincrement())
+  name     String
+  lessons  LessonStudents[]
+  sessions SessionStudents[]
+}
+
+model Teacher {
+  id      Int      @id @default(autoincrement())
+  name    String
+  lessons Lesson[]
+}
+
+model Lesson {
+  id        Int              @id @default(autoincrement())
+  name      String
+  students  LessonStudents[]
+  teacherId Int
+  teacher   Teacher          @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  sessions  Session[]
+
+  @@index([teacherId])
+}
+
+model LessonStudents {
+  id        Int     @id @default(autoincrement())
+  lessonId  Int
+  lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  studentId Int
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId, studentId])
+}
+
+model Session {
+  id       Int               @id @default(autoincrement())
+  title    String
+  date     DateTime
+  students SessionStudents[]
+  lessonId Int
+  lesson   Lesson            @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+}
+
+model SessionStudents {
+  id        Int     @id @default(autoincrement())
+  sessionId Int
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId Int
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  present   Boolean
+
+  @@index([sessionId, studentId])
+}
+
+model User {
+  id       String  @id @default(cuid())
+  name     String
+  username String  @unique
+  password String
+  image    String?
+}
