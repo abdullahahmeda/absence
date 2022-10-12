@@ -63,6 +63,7 @@ const TelegramBotSettings = ({ settings }) => {
         {}
       )
     )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onSubmit = data => {

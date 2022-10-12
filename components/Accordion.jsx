@@ -14,11 +14,13 @@ export default function Accordion ({
     <div className='bg-white mb-2 rounded-lg overflow-hidden'>
       <div className='bg-gray-300 px-2 py-4'>
         <button className='block' onClick={toggle}>
-          {isOpen ? (
-            <MdKeyboardArrowUp className='inline-block' />
-          ) : (
-            <MdKeyboardArrowDown className='inline-block' />
-          )}{' '}
+          {isOpen
+            ? (
+              <MdKeyboardArrowUp className='inline-block' />
+              )
+            : (
+              <MdKeyboardArrowDown className='inline-block' />
+              )}{' '}
           {header}
         </button>
       </div>

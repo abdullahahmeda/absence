@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import Head from 'next/head'
@@ -18,12 +18,13 @@ type FormValues = {
   lesson: null | Lesson
   title: string
   date: Date | null
-  students: {
-    [key: number]: {
-      present: boolean
-      count: boolean
-    }
-  }
+  students: any
+  // students: {
+  //   [key: number]: {
+  //     present: boolean
+  //     count: boolean
+  //   }
+  // }
 }
 
 type Props = {
@@ -96,6 +97,7 @@ const EditSession = ({ _session: session, students }: Props) => {
       ...session,
       students: studentsObject
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onSubmit = async (data: FormValues) => {
@@ -154,7 +156,7 @@ const EditSession = ({ _session: session, students }: Props) => {
               </div>
             ))}
             <p className='text-red-500 text-sm mb-2'>
-              {formErrors.students?.message}
+              {formErrors.students?.message as ReactNode}
             </p>
           </div>
           <DevTool control={control} />

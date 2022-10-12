@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import Head from 'next/head'
@@ -18,12 +18,13 @@ type FormValues = {
   lesson: null | Lesson
   title: string
   date: Date | null
-  students: {
-    [key: number]: {
-      present: boolean
-      count: boolean
-    }
-  }
+  students: any
+  // students: {
+  //   [key: number]: {
+  //     present: boolean
+  //     count: boolean
+  //   }
+  // }
 }
 
 type Props = {
@@ -181,7 +182,7 @@ const CreateSession = ({ lessons }: Props) => {
                 </div>
               ))}
             <p className='text-red-500 text-sm mb-2'>
-              {formErrors.students?.message}
+              {formErrors.students?.message as ReactNode}
             </p>
           </div>
           <DevTool control={control} />
