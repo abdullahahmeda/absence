@@ -17,4 +17,8 @@ yup.setLocale({
   }
 })
 
+yup.addMethod(yup.string, 'password', function () {
+  return this.min(4).max(100)
+})
+
 export default yup

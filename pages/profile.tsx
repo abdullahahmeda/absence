@@ -9,10 +9,10 @@ import { GetServerSideProps } from 'next'
 import { authOptions } from './api/auth/[...nextauth]'
 import { useSession } from 'next-auth/react'
 
-const defaultValues = {
-  currentPassword: '',
-  newPassword: '',
-  newPasswordConfirmation: ''
+type FormValues = {
+  currentPassword: string
+  newPassword: string
+  newPasswordConfirmation: string
 }
 
 const Profile = () => {
@@ -23,14 +23,18 @@ const Profile = () => {
     handleSubmit,
     formState: { errors: formErrors },
     setError
-  } = useForm({
-    defaultValues,
+  } = useForm<FormValues>({
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      newPasswordConfirmation: ''
+    },
     resolver: yupResolver(profileSchema)
   })
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: FormValues) => {
     axios
-      .post('/api/profile', data)
+      .patch('/api/profile', data)
       .then(() => {
         toast.success('تم حفظ البيانات.')
       })

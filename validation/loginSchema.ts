@@ -14,8 +14,7 @@ const loginSchema = yup.object({
   password: yup
     .string()
     .required()
-    .max(100)
-    .min(4)
+    .password()
     .label('كلمة المرور')
 })
 
