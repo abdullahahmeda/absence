@@ -50,8 +50,10 @@ export const authOptions: NextAuthOptions = {
       }
       return token
     },
-    async session ({ session, token, user }) {
-      session.user.username = token.username
+    async session ({ session, token }) {
+      if (session !== undefined) {
+        session.user.username = token.username
+      }
       return session
     }
   }
