@@ -57,7 +57,7 @@ const handler = nc().patch(
       console.log(error)
       return res.status(500).json({})
     }
-    res.json()
+    res.json({})
   }
 )
 
