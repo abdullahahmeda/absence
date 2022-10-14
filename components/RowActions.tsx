@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { MdDelete, MdEdit } from 'react-icons/md'
 
 type Props = {
-  onDelete: Function
+  onDelete: () => void
   editLink: string
 }
 

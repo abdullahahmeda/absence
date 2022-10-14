@@ -1,7 +1,7 @@
 import CredentialsProvider from 'next-auth/providers/credentials'
 import NextAuth, { NextAuthOptions } from 'next-auth'
-import loginSchema from '../../../validation/loginSchema'
-import prisma from '../../../lib/prisma'
+import loginSchema from 'validation/loginSchema'
+import prisma from 'lib/prisma'
 import bcrypt from 'bcryptjs'
 
 export const authOptions: NextAuthOptions = {
@@ -12,7 +12,7 @@ export const authOptions: NextAuthOptions = {
         username: { label: 'اسم المستخدم', type: 'text' },
         password: { label: 'كلمة المرور', type: 'password' }
       },
-      async authorize (credentials, req) {
+      async authorize (credentials) {
         let body
         try {
           body = await loginSchema.validate(credentials, { stripUnknown: true })

@@ -18,14 +18,14 @@ import { toast } from 'react-hot-toast'
 import { useSession, signOut } from 'next-auth/react'
 import { CgSpinner } from 'react-icons/cg'
 import SidebarButton from './SidebarButton'
-import Dropdown from './Dropdown'
+// import Dropdown from './Dropdown'
 
 const sidebarMiniVariantWidth = 80
 const sidebarWidth = 300
 
 const Sidebar = styled('div', {
-  shouldForwardProp: (prop: any) => prop !== 'open'
-})(({ open }: any) => ({
+  shouldForwardProp: (prop: unknown) => prop !== 'open'
+})(({ open }: { open: boolean }) => ({
   overflow: 'hidden',
   transition: 'all .3s',
   width: 0,
@@ -42,8 +42,8 @@ const Sidebar = styled('div', {
 }))
 
 const DropdownContent = styled('div', {
-  shouldForwardProp: (prop: any) => prop !== 'open'
-})(({ open }: any) => ({
+  shouldForwardProp: (prop: unknown) => prop !== 'open'
+})(({ open }: { open: boolean }) => ({
   transition: 'transform 0.3s',
   ...(open && {
     transform: 'translateY(0%)'
@@ -51,8 +51,8 @@ const DropdownContent = styled('div', {
 }))
 
 const LayoutWrapper = styled('div', {
-  shouldForwardProp: (prop: any) => prop !== 'open'
-})(({ open }: any) => ({
+  shouldForwardProp: (prop: unknown) => prop !== 'open'
+})(({ open }: { open: boolean }) => ({
   marginRight: 0,
   transition: 'margin-right .3s',
 
@@ -65,8 +65,8 @@ const LayoutWrapper = styled('div', {
 }))
 
 const Overlay = styled('div', {
-  shouldForwardProp: (prop: any) => prop !== 'open'
-})(({ open }: any) => ({
+  shouldForwardProp: (prop: unknown) => prop !== 'open'
+})(({ open }: { open: boolean }) => ({
   display: 'block',
   position: 'fixed',
   left: 0,
@@ -106,7 +106,7 @@ export default function Layout ({ children }: any) {
 
   const { pathname, push } = useRouter()
 
-  const { data: session, status } = useSession()
+  const { status } = useSession()
 
   const isDesktop = useMediaQuery('(min-width: 1024px)')
   const closeSidebar = () => setIsSidebarOpen(false)
@@ -501,13 +501,13 @@ export default function Layout ({ children }: any) {
               )}
 
               {status === 'authenticated' && (
-                <button className='mr-auto link' onClick={logout}>
+                <button className='mr-auto btn-link' onClick={logout}>
                   تسجيل الخروج
                 </button>
               )}
               {status === 'unauthenticated' && (
                 <Link href='/login'>
-                  <a className='mr-auto link'>تسجيل الدخول</a>
+                  <a className='mr-auto btn-link'>تسجيل الدخول</a>
                 </Link>
               )}
             </div>

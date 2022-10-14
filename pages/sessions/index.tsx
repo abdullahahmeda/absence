@@ -7,12 +7,17 @@ import { useConfirm } from 'lib/confirm'
 import prisma from 'lib/prisma'
 import { toast } from 'react-hot-toast'
 import axios from 'axios'
+import { useState } from 'react'
+import { authOptions } from 'pages/api/auth/[...nextauth]'
+import { unstable_getServerSession } from 'next-auth'
+import { GetServerSideProps } from 'next'
+import { useSession } from 'next-auth/react'
 
 type Props = {
   sessions: (Session & { lesson: Lesson } & { students: SessionStudents[] })[]
 }
 
-const renderProgressClassName = (percentage: Number) => {
+const renderProgressClassName = (percentage: number) => {
   if (percentage <= 25) return 'bg-red-600'
   else if (percentage <= 50) return 'bg-yellow-500'
   else if (percentage <= 75) return 'bg-green-500'
@@ -20,6 +25,9 @@ const renderProgressClassName = (percentage: Number) => {
 }
 
 const Students = ({ sessions }: Props) => {
+  const [visibleSessions, setVisibleSessions] = useState(sessions)
+
+  const { status } = useSession()
   const confirm = useConfirm()
   const confirmDelete = (session: Session) => {
     confirm({
@@ -29,6 +37,8 @@ const Students = ({ sessions }: Props) => {
       axios
         .delete(`/api/sessions/${session.id}`)
         .then(() => {
+          const newSessions = visibleSessions.filter(s => s.id !== session.id)
+          setVisibleSessions(newSessions)
           toast.success(`تم حذف الجلسة ${session.title} بنجاح.`)
         })
         .catch(error => {
@@ -51,9 +61,11 @@ const Students = ({ sessions }: Props) => {
       <div>
         <div className='flex mb-2'>
           <h1 className='ml-3 text-3xl font-bold'>الجلسات</h1>
-          <Link href='/sessions/create'>
-            <a className='btn-primary'>إضافة جلسة</a>
-          </Link>
+          {status === 'authenticated' && (
+            <Link href='/sessions/create'>
+              <a className='btn-primary'>إضافة جلسة</a>
+            </Link>
+          )}
         </div>
         <div className='overflow-x-auto relative'>
           <table className='w-full text-sm text-right text-gray-500 mb-2'>
@@ -71,13 +83,15 @@ const Students = ({ sessions }: Props) => {
                 <th scope='col' className='py-3 px-6 xrounded-tl-lg'>
                   نسبة الحضور
                 </th>
-                <th scope='col' className='py-3 px-6 rounded-tl-lg'>
-                  الإجراءات
-                </th>
+                {status === 'authenticated' && (
+                  <th scope='col' className='py-3 px-6 rounded-tl-lg'>
+                    الإجراءات
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
-              {sessions.map(session => {
+              {visibleSessions.map(session => {
                 const presencePercentage =
                   (session.students.reduce(
                     (acc, v) => (v.present ? acc + 1 : acc),
@@ -91,25 +105,25 @@ const Students = ({ sessions }: Props) => {
                     className='bg-white border-b last-of-type:border-b-0'
                     key={session.id}
                   >
-                    <th
+                    <td
                       scope='row'
                       className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
                     >
                       {session.title}
-                    </th>
-                    <th
+                    </td>
+                    <td
                       scope='row'
                       className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
                     >
                       {format(session.date, 'dd-MM-yyyy')}
-                    </th>
-                    <th
+                    </td>
+                    <td
                       scope='row'
                       className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
                     >
                       {session.lesson.name}
-                    </th>
-                    <th
+                    </td>
+                    <td
                       scope='row'
                       className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
                     >
@@ -125,13 +139,15 @@ const Students = ({ sessions }: Props) => {
                           }}
                         ></div>
                       </div>
-                    </th>
-                    <th>
-                      <RowActions
-                        editLink={`/sessions/${session.id}/edit`}
-                        onDelete={() => confirmDelete(session)}
-                      />
-                    </th>
+                    </td>
+                    {status === 'authenticated' && (
+                      <td>
+                        <RowActions
+                          editLink={`/sessions/${session.id}/edit`}
+                          onDelete={() => confirmDelete(session)}
+                        />
+                      </td>
+                    )}
                   </tr>
                 )
               })}
@@ -143,7 +159,12 @@ const Students = ({ sessions }: Props) => {
   )
 }
 
-export async function getServerSideProps () {
+export const getServerSideProps: GetServerSideProps = async context => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  )
   const sessions = await prisma.session.findMany({
     include: {
       lesson: true,
@@ -153,6 +174,7 @@ export async function getServerSideProps () {
 
   return {
     props: {
+      session,
       sessions: sessions
     }
   }

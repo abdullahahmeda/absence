@@ -45,7 +45,6 @@ const EditSession = ({ _session: session, students }: Props) => {
   const {
     register,
     handleSubmit,
-    getValues,
     control,
     reset,
     formState: { errors: formErrors, isSubmitting }
@@ -58,7 +57,6 @@ const EditSession = ({ _session: session, students }: Props) => {
     },
     resolver: yupResolver(sessionSchema)
   })
-  console.log(session)
 
   const {
     field: { onChange: _, value: __ }
@@ -78,7 +76,6 @@ const EditSession = ({ _session: session, students }: Props) => {
       [k: number]: { present: boolean; count: boolean }
     } = {}
     for (const s of session.students) {
-      console.log(s)
       studentsObject[s.student.id] = {
         present: s.present,
         count: true
@@ -88,16 +85,15 @@ const EditSession = ({ _session: session, students }: Props) => {
       if (studentsObject[s.id] === undefined) {
         studentsObject[s.id] = {
           present: false,
-          count: false
+          count: true
         }
       }
     }
-    console.log(studentsObject)
     reset({
       ...session,
       students: studentsObject
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onSubmit = async (data: FormValues) => {

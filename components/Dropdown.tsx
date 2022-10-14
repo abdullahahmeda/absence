@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { Disclosure, Transition } from '@headlessui/react'
-import { MdOutlineExpandMore } from 'react-icons/md'
+// import { MdOutlineExpandMore } from 'react-icons/md'
 
 type Props = {
   title: ReactNode

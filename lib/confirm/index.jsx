@@ -63,6 +63,7 @@ export const ConfirmProvider = ({ children, defaultOptions = {} }) => {
       setOptions(buildOptions(defaultOptions, options))
       setResolveReject([resolve, reject])
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleClose = useCallback(() => {

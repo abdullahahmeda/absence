@@ -35,6 +35,7 @@ const EditStudent = ({ student }: Props) => {
 
   useEffect(() => {
     reset(student)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const router = useRouter()

@@ -41,7 +41,8 @@ model LessonStudents {
   studentId Int
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  @@index([lessonId, studentId])
+  @@index([lessonId])
+  @@index([studentId])
 }
 
 model Session {
@@ -53,6 +54,7 @@ model Session {
   lesson   Lesson            @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@index([lessonId])
+  @@index([date])
 }
 
 model SessionStudents {
@@ -63,7 +65,9 @@ model SessionStudents {
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   present   Boolean
 
-  @@index([sessionId, studentId])
+  @@index([sessionId])
+  @@index([studentId])
+  @@index([present])
 }
 
 model User {

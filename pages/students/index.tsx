@@ -6,6 +6,10 @@ import toast from 'react-hot-toast'
 import RowActions from 'components/RowActions'
 import { useConfirm } from 'lib/confirm'
 import prisma from 'lib/prisma'
+import { authOptions } from 'pages/api/auth/[...nextauth]'
+import { useSession } from 'next-auth/react'
+import { unstable_getServerSession } from 'next-auth'
+import { GetServerSideProps } from 'next'
 
 type Props = {
   students: (Student & {
@@ -14,7 +18,7 @@ type Props = {
   })[]
 }
 
-const renderProgressClassName = (percentage: Number) => {
+const renderProgressClassName = (percentage: number) => {
   if (percentage <= 25) return 'bg-red-600'
   else if (percentage <= 50) return 'bg-yellow-500'
   else if (percentage <= 75) return 'bg-green-500'
@@ -22,6 +26,7 @@ const renderProgressClassName = (percentage: Number) => {
 }
 
 const Students = ({ students }: Props) => {
+  const { status } = useSession()
   const confirm = useConfirm()
   const confirmDelete = (student: Student) => {
     confirm({
@@ -53,9 +58,11 @@ const Students = ({ students }: Props) => {
       <div>
         <div className='flex mb-2'>
           <h1 className='ml-3 text-3xl font-bold'>الطلاب</h1>
-          <Link href='/students/create'>
-            <a className='btn-primary'>إضافة طالب</a>
-          </Link>
+          {status === 'authenticated' && (
+            <Link href='/students/create'>
+              <a className='btn-primary'>إضافة طالب</a>
+            </Link>
+          )}
         </div>
         <div className='overflow-x-auto relative'>
           <table className='w-full text-sm text-right text-gray-500 mb-2'>
@@ -70,9 +77,11 @@ const Students = ({ students }: Props) => {
                 <th scope='col' className='py-3 px-6 xrounded-tl-lg'>
                   نسبة الحضور
                 </th>
-                <th scope='col' className='py-3 px-6 rounded-tl-lg'>
-                  الإجراءات
-                </th>
+                {status === 'authenticated' && (
+                  <th scope='col' className='py-3 px-6 rounded-tl-lg'>
+                    الإجراءات
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -90,19 +99,21 @@ const Students = ({ students }: Props) => {
                     className='bg-white border-b last-of-type:border-b-0'
                     key={student.id}
                   >
-                    <th
+                    <td
                       scope='row'
                       className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
                     >
-                      {student.name}
-                    </th>
-                    <th
+                      <Link href={`/students/${student.id}`}>
+                        <a className='text-blue-600 btn-link'>{student.name}</a>
+                      </Link>
+                    </td>
+                    <td
                       scope='row'
                       className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
                     >
                       {student.lessons.length}
-                    </th>
-                    <th
+                    </td>
+                    <td
                       scope='row'
                       className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
                     >
@@ -124,16 +135,18 @@ const Students = ({ students }: Props) => {
                       ) : (
                         'لم تحسب بعد'
                       )}
-                    </th>
-                    <th
-                      scope='row'
-                      className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
-                    >
-                      <RowActions
-                        editLink={`/students/${student.id}/edit`}
-                        onDelete={() => confirmDelete(student)}
-                      />
-                    </th>
+                    </td>
+                    {status === 'authenticated' && (
+                      <td
+                        scope='row'
+                        className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
+                      >
+                        <RowActions
+                          editLink={`/students/${student.id}/edit`}
+                          onDelete={() => confirmDelete(student)}
+                        />
+                      </td>
+                    )}
                   </tr>
                 )
               })}
@@ -145,7 +158,12 @@ const Students = ({ students }: Props) => {
   )
 }
 
-export async function getServerSideProps () {
+export const getServerSideProps: GetServerSideProps = async context => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  )
   const students = await prisma.student.findMany({
     include: {
       lessons: true,
@@ -154,6 +172,7 @@ export async function getServerSideProps () {
   })
   return {
     props: {
+      session,
       students
     }
   }

@@ -1,4 +1,4 @@
-import { format, getYear, isSameDay, isToday } from 'date-fns'
+import { format, getYear } from 'date-fns'
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
 const DatePicker = (props: ReactDatePickerProps) => {
@@ -6,7 +6,7 @@ const DatePicker = (props: ReactDatePickerProps) => {
     <ReactDatePicker
       className='block w-full input'
       calendarClassName='bg-white p-3 rounded-lg shadow relative top-[5px]'
-      dayClassName={date =>
+      dayClassName={() =>
         'cursor-pointer rounded-lg w-[40px] py-2 text-center inline-block last-of-type:ml-0 text-sm'
       }
       weekDayClassName={() =>

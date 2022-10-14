@@ -12,7 +12,6 @@ import lessonSchema from 'validation/lessonScehma'
 import prisma from 'lib/prisma'
 import { Lesson, Student, Teacher } from '@prisma/client'
 import RtlSelect from 'components/RtlSelect'
-import { MdExpandMore } from 'react-icons/md'
 import { DevTool } from '@hookform/devtools'
 
 type FormValues = {
@@ -66,6 +65,7 @@ const EditLesson = ({ lesson, teachers, students }: Props) => {
 
   useEffect(() => {
     reset(lesson)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onSubmit = async (data: FormValues) => {
@@ -132,7 +132,9 @@ const EditLesson = ({ lesson, teachers, students }: Props) => {
             </p>
           </div>
           <DevTool control={control} />
-          <LoadingButton isLoading={isSubmitting}>تعديل</LoadingButton>
+          <LoadingButton className='btn-primary' isLoading={isSubmitting}>
+            تعديل
+          </LoadingButton>
         </form>
       </div>
     </>

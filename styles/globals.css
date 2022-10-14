@@ -21,7 +21,7 @@
 }
 
 @layer components {
-  .link {
+  .btn-link {
     @apply px-3 py-2 transition-colors hover:bg-zinc-900/10 active:bg-zinc-900/25 rounded;
   }
 
@@ -30,7 +30,7 @@
   }
 
   .btn-base {
-    @apply cursor-pointer disabled:bg-gray-300 disabled:text-gray-50 disabled:cursor-not-allowed px-3 py-2 rounded transition-colors focus:ring focus:ring-opacity-30;
+    @apply cursor-pointer disabled:bg-gray-300 disabled:text-gray-50 disabled:hover:bg-gray-300 disabled:cursor-not-allowed px-3 py-2 rounded transition-colors focus:ring focus:ring-opacity-30;
   }
 
   .btn-primary {

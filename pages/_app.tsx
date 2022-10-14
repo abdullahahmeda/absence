@@ -6,6 +6,7 @@ import { registerLocale, setDefaultLocale } from 'react-datepicker'
 import { setDefaultOptions } from 'date-fns'
 import ar from 'date-fns/locale/ar'
 import { SessionProvider } from 'next-auth/react'
+import 'react-circular-progressbar/dist/styles.css'
 
 setDefaultOptions({
   locale: ar

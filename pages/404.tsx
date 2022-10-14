@@ -14,7 +14,7 @@ const NotFound = () => {
           404 | هذه الصفحة غير موجودة
         </p>
         <Link href='/'>
-          <a className='link inline-block text-white mt-2'>
+          <a className='btn-link inline-block text-white mt-2'>
             الرجوع للصفحة الرئيسية
           </a>
         </Link>
