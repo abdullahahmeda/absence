@@ -1,6 +1,6 @@
 import * as yup from 'yup'
 
-export function isValidId (id: any) {
+export function isValidId (id: unknown) {
   return yup
     .number()
     .positive()

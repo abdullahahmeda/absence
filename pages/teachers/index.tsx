@@ -10,12 +10,15 @@ import { authOptions } from 'pages/api/auth/[...nextauth]'
 import { useSession } from 'next-auth/react'
 import { unstable_getServerSession } from 'next-auth'
 import { GetServerSideProps } from 'next'
+import { useState } from 'react'
 
 type Props = {
   teachers: (Teacher & { lessons: Lesson[] })[]
 }
 
 const Teachers = ({ teachers }: Props) => {
+  const [visibleTeachers, setVisibleTeachers] = useState(teachers)
+
   const { status } = useSession()
   const confirm = useConfirm()
   const confirmDelete = (teacher: Teacher) => {
@@ -26,6 +29,8 @@ const Teachers = ({ teachers }: Props) => {
       axios
         .delete(`/api/teachers/${teacher.id}`)
         .then(() => {
+          const newTeachers = visibleTeachers.filter(t => t.id !== teacher.id)
+          setVisibleTeachers(newTeachers)
           toast.success(`تم حذف الشيخ ${teacher.name} بنجاح.`)
         })
         .catch(error => {
@@ -47,9 +52,11 @@ const Teachers = ({ teachers }: Props) => {
       </Head>
       <div>
         <div className='flex mb-2'>
-          <h1 className='ml-3 text-3xl font-bold'>المشايخ</h1>
+          <h1 className='ml-3 text-3xl font-bold'>
+            المشايخ ({visibleTeachers.length})
+          </h1>
           {status === 'authenticated' && (
-            <Link href='/students/create' passHref>
+            <Link href='/teachers/create' passHref>
               <a className='btn-primary'>إضافة شيخ</a>
             </Link>
           )}
@@ -72,7 +79,7 @@ const Teachers = ({ teachers }: Props) => {
               </tr>
             </thead>
             <tbody>
-              {teachers.map(teacher => {
+              {visibleTeachers.map(teacher => {
                 return (
                   <tr
                     className='bg-white border-b last-of-type:border-b-0'

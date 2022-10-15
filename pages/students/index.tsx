@@ -10,6 +10,8 @@ import { authOptions } from 'pages/api/auth/[...nextauth]'
 import { useSession } from 'next-auth/react'
 import { unstable_getServerSession } from 'next-auth'
 import { GetServerSideProps } from 'next'
+import { useState } from 'react'
+import { MdGrade } from 'react-icons/md'
 
 type Props = {
   students: (Student & {
@@ -26,6 +28,8 @@ const renderProgressClassName = (percentage: number) => {
 }
 
 const Students = ({ students }: Props) => {
+  const [visibleStudents, setVisibleStudents] = useState(students)
+
   const { status } = useSession()
   const confirm = useConfirm()
   const confirmDelete = (student: Student) => {
@@ -36,6 +40,8 @@ const Students = ({ students }: Props) => {
       axios
         .delete(`/api/students/${student.id}`)
         .then(() => {
+          const newStudents = visibleStudents.filter(s => s.id !== student.id)
+          setVisibleStudents(newStudents)
           toast.success(`تم حذف الطالب ${student.name} بنجاح.`)
         })
         .catch(error => {
@@ -57,7 +63,9 @@ const Students = ({ students }: Props) => {
       </Head>
       <div>
         <div className='flex mb-2'>
-          <h1 className='ml-3 text-3xl font-bold'>الطلاب</h1>
+          <h1 className='ml-3 text-3xl font-bold'>
+            الطلاب ({visibleStudents.length})
+          </h1>
           {status === 'authenticated' && (
             <Link href='/students/create'>
               <a className='btn-primary'>إضافة طالب</a>
@@ -85,7 +93,7 @@ const Students = ({ students }: Props) => {
               </tr>
             </thead>
             <tbody>
-              {students.map(student => {
+              {visibleStudents.map(student => {
                 const presencePercentage =
                   (student.sessions.reduce(
                     (acc, v) => (v.present ? acc + 1 : acc),
@@ -101,8 +109,15 @@ const Students = ({ students }: Props) => {
                   >
                     <td
                       scope='row'
-                      className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
+                      className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap flex items-center'
                     >
+                      {Number(presencePercentage.toFixed(0)) > 75 && (
+                        <MdGrade
+                          size={20}
+                          className='text-yellow-500'
+                          title='ممتاز! نسبة حضور أعلى من 75%'
+                        />
+                      )}
                       <Link href={`/students/${student.id}`}>
                         <a className='text-blue-600 btn-link'>{student.name}</a>
                       </Link>

@@ -1,18 +1,18 @@
 import { GetServerSideProps } from 'next'
 import prisma from 'lib/prisma'
 import { isValidId } from 'utils'
-import { Session, Student as StudentSchema } from '@prisma/client'
+import { Session, Student } from '@prisma/client'
 import Head from 'next/head'
 
 type Props = {
-  student: StudentSchema & {
+  student: Student & {
     sessions: {
       session: Session
     }[]
   }
 }
 
-const Student = ({ student }: Props) => {
+const ViewStudent = ({ student }: Props) => {
   return (
     <>
       <Head>
@@ -69,4 +69,4 @@ export const getServerSideProps: GetServerSideProps = async context => {
   }
 }
 
-export default Student
+export default ViewStudent

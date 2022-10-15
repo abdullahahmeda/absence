@@ -60,7 +60,9 @@ const Students = ({ sessions }: Props) => {
       </Head>
       <div>
         <div className='flex mb-2'>
-          <h1 className='ml-3 text-3xl font-bold'>الجلسات</h1>
+          <h1 className='ml-3 text-3xl font-bold'>
+            الجلسات ({visibleSessions.length})
+          </h1>
           {status === 'authenticated' && (
             <Link href='/sessions/create'>
               <a className='btn-primary'>إضافة جلسة</a>
@@ -109,7 +111,11 @@ const Students = ({ sessions }: Props) => {
                       scope='row'
                       className='py-4 px-6 font-medium text-gray-900 whitespace-nowrap'
                     >
-                      {session.title}
+                      <Link href={`/sessions/${session.id}`}>
+                        <a className='text-blue-600 btn-link'>
+                          {session.title}
+                        </a>
+                      </Link>
                     </td>
                     <td
                       scope='row'

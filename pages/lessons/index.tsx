@@ -10,12 +10,15 @@ import RowActions from 'components/RowActions'
 import { useConfirm } from 'lib/confirm'
 import prisma from 'lib/prisma'
 import { useSession } from 'next-auth/react'
+import { useState } from 'react'
 
 type Props = {
   lessons: (Lesson & { teacher: Teacher; sessions: Session[] })[]
 }
 
 const Lessons = ({ lessons }: Props) => {
+  const [visibleLessons, setVisibleLessons] = useState(lessons)
+
   const { status } = useSession()
   const confirm = useConfirm()
   const confirmDelete = (lesson: Lesson) => {
@@ -26,6 +29,8 @@ const Lessons = ({ lessons }: Props) => {
       axios
         .delete(`/api/lessons/${lesson.id}`)
         .then(() => {
+          const newLessons = visibleLessons.filter(l => l.id !== lesson.id)
+          setVisibleLessons(newLessons)
           toast.success(`تم حذف الدرس ${lesson.name} بنجاح.`)
         })
         .catch(error => {
@@ -47,9 +52,11 @@ const Lessons = ({ lessons }: Props) => {
       </Head>
       <div>
         <div className='flex mb-2'>
-          <h1 className='ml-3 text-3xl font-bold'>الدروس</h1>
+          <h1 className='ml-3 text-3xl font-bold'>
+            الدروس ({visibleLessons.length})
+          </h1>
           {status === 'authenticated' && (
-            <Link href='/students/create'>
+            <Link href='/lessons/create'>
               <a className='btn-primary'>إضافة درس</a>
             </Link>
           )}
@@ -75,7 +82,7 @@ const Lessons = ({ lessons }: Props) => {
               </tr>
             </thead>
             <tbody>
-              {lessons.map(lesson => {
+              {visibleLessons.map(lesson => {
                 return (
                   <tr
                     className='bg-white border-b last-of-type:border-b-0'
